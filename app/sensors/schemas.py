@@ -35,7 +35,7 @@ class MeasurementTypeBase(BaseModel):
 class SensorMeasurement(BaseModel):
     type_id: int
     measurement_formula: Optional[str] = None
-    measurement_type: MeasurementTypeBase  # Include this
+    measurement_type: MeasurementTypeBase
 
     class Config:
         orm_mode = True

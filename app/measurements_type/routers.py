@@ -4,26 +4,6 @@ from typing import List
 from app.measurements_type import crud, schemas  # Импорт database должен быть адаптирован под ваш проект
 from app import database
 
-
-
-tags_metadata = [ {
-    "name": "measurements_type",
-    "description": "Operations related to measurements types. Manage the types of measurements that sensors can perform, including creating, listing, updating, and deleting measurements types.",
-    "externalDocs": {
-        "description": "Learn more about measurements types",
-        "url": "https://yourdocumentationlink.com/measurements_type",
-    },
-}
-]
-
-
-
-
-
-
-
-
-
 router = APIRouter()
 
 @router.post("/measurement_types/", response_model=schemas.MeasurementType)

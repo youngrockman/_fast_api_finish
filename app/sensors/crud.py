@@ -19,28 +19,19 @@ def get_sensors(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Sensor).offset(skip).limit(limit).all()
 
 
-# def get_sensor(db: Session, sensor_id: int):
-#     return db.query(models.Sensor).filter(models.Sensor.sensor_id == sensor_id).first()
-
-
 def get_sensor(db: Session, sensor_id: int):
     sensor = db.query(models.Sensor).filter(models.Sensor.sensor_id == sensor_id).first()
     if sensor:
-        # Fetching measurement types separately and appending them to each measurement
         for measurement in sensor.measurements:
             measurement_type = db.query(MeasurementType).filter(MeasurementType.type_id == measurement.type_id).first()
-            measurement.measurement_type = measurement_type  # Assuming this works due to your ORM configuration
+            measurement.measurement_type = measurement_type
     return sensor
-
-
-
 
 
 def update_sensor(db: Session, sensor_id: int, sensor: schemas.SensorCreate):
     db_sensor = db.query(models.Sensor).filter(models.Sensor.sensor_id == sensor_id).first()
     if db_sensor:
         db_sensor.sensor_name = sensor.sensor_name
-        # Handle measurements update logic here
         db.commit()
         return db_sensor
     return None
