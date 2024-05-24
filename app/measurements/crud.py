@@ -21,3 +21,4 @@ def delete_measurements_by_ids(db: Session, measurement_ids: List[str]):
         .filter(models.Measurement.sensor_inventory_number.in_(measurement_ids)) \
         .delete(synchronize_session='fetch')
     db.commit()
+

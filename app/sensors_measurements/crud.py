@@ -1,6 +1,7 @@
+from typing import List
 from sqlalchemy.orm import Session
-from app.sensors import models as sensor_models
 from app.measurements import models as measurement_models
+from app.sensors import models as sensor_models
 from . import schemas
 
 
@@ -23,6 +24,19 @@ def delete_measurements_by_ids(db: Session, measurement_ids: List[str]):
     db.commit()
 
 
+
+def delete_sensor_measurements(db: Session, sensor_id: int, measurements_type: list):
+    try:
+        db.query(measurement_models.Measurement).filter(
+            measurement_models.Measurement.sensor_inventory_number == str(sensor_id),
+            measurement_models.Measurement.measurement_type.in_(measurements_type)
+        ).delete(synchronize_session=False)
+        db.commit()
+        return {"message": "Measurements deleted successfully"}
+    except Exception as e:
+        db.rollback()
+        raise e
+
 def bind_measurements_to_sensor(db: Session, sensor_id: int, measurements: schemas.SensorMeasurementsCreate):
     try:
         for sensor_measurement in measurements.sensors_measurements:
@@ -35,19 +49,6 @@ def bind_measurements_to_sensor(db: Session, sensor_id: int, measurements: schem
             db.add(db_measurement)
         db.commit()
         return {"message": "Measurements bound to sensor successfully"}
-    except Exception as e:
-        db.rollback()
-        raise e
-
-
-def delete_sensor_measurements(db: Session, sensor_id: int, measurements_type: list):
-    try:
-        db.query(measurement_models.Measurement).filter(
-            measurement_models.Measurement.sensor_inventory_number == str(sensor_id),
-            measurement_models.Measurement.measurement_type.in_(measurements_type)
-        ).delete(synchronize_session=False)
-        db.commit()
-        return {"message": "Measurements deleted successfully"}
     except Exception as e:
         db.rollback()
         raise e
