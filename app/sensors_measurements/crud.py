@@ -1,11 +1,13 @@
 from typing import List
 from sqlalchemy.orm import Session
 from app.measurements import models as measurement_models
-from app.sensors import models as sensor_models
 from . import schemas
+import logging
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-def create_measurement(db: Session, measurement: schemas.MeasurementCreate):
+def create_measurement(db: Session, measurement: schemas.Measurement):
     db_measurement = measurement_models.Measurement(**measurement.dict())
     db.add(db_measurement)
     db.commit()
@@ -13,17 +15,11 @@ def create_measurement(db: Session, measurement: schemas.MeasurementCreate):
     return db_measurement
 
 
-def get_measurements(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(measurement_models.Measurement).offset(skip).limit(limit).all()
-
-
 def delete_measurements_by_ids(db: Session, measurement_ids: List[str]):
     db.query(measurement_models.Measurement) \
         .filter(measurement_models.Measurement.sensor_inventory_number.in_(measurement_ids)) \
         .delete(synchronize_session='fetch')
     db.commit()
-
-
 
 def delete_sensor_measurements(db: Session, sensor_id: int, measurements_type: list):
     try:
